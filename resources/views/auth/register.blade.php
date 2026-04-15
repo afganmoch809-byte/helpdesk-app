@@ -61,12 +61,12 @@
                                     @enderror
                                 </div>
                                 
-                                <!-- Field Identifier (NIM/NIP/NIK) -->
+                                <!-- Username (tetap Username) -->
                                 <div class="fv-row mb-8">
-                                    <label class="required fw-semibold fs-6 mb-2" id="identifier_label">NIM</label>
-                                    <input type="text" name="username" id="identifier_input" value="{{ old('username') }}" 
+                                    <label class="required fw-semibold fs-6 mb-2">Username</label>
+                                    <input type="text" placeholder=" Masukkan Username" name="username" id="username_input" value="{{ old('username') }}" 
                                         class="form-control form-control-solid @error('username') is-invalid @enderror" required />
-                                    <div class="form-text" id="identifier_hint"></div>
+                                    <div class="form-text" id="username_hint"></div>
                                     @error('username')
                                         <div class="invalid-feedback">{{ $message }}</div>
                                     @enderror
@@ -90,22 +90,26 @@
                                     @enderror
                                 </div>
                                 
-                                <!-- Fakultas -->
-                                <div class="fv-row mb-8" id="faculty_field">
-                                    <input type="text" placeholder="Fakultas" name="fakultas" value="{{ old('fakultas') }}" 
-                                        class="form-control form-control-solid @error('fakultas') is-invalid @enderror" />
-                                    @error('fakultas')
-                                        <div class="invalid-feedback">{{ $message }}</div>
-                                    @enderror
+                                <!-- Fakultas (khusus mahasiswa) -->
+                                <div id="faculty_field" style="display: none;">
+                                    <div class="fv-row mb-8">
+                                        <input type="text" placeholder="Fakultas" name="fakultas" value="{{ old('fakultas') }}" 
+                                            class="form-control form-control-solid @error('fakultas') is-invalid @enderror" />
+                                        @error('fakultas')
+                                            <div class="invalid-feedback">{{ $message }}</div>
+                                        @enderror
+                                    </div>
                                 </div>
                                 
-                                <!-- Program Studi -->
-                                <div class="fv-row mb-8" id="prodi_field">
-                                    <input type="text" placeholder="Program Studi" name="prodi" value="{{ old('prodi') }}" 
-                                        class="form-control form-control-solid @error('prodi') is-invalid @enderror" />
-                                    @error('prodi')
-                                        <div class="invalid-feedback">{{ $message }}</div>
-                                    @enderror
+                                <!-- Program Studi (khusus mahasiswa) -->
+                                <div id="prodi_field" style="display: none;">
+                                    <div class="fv-row mb-8">
+                                        <input type="text" placeholder="Program Studi" name="prodi" value="{{ old('prodi') }}" 
+                                            class="form-control form-control-solid @error('prodi') is-invalid @enderror" />
+                                        @error('prodi')
+                                            <div class="invalid-feedback">{{ $message }}</div>
+                                        @enderror
+                                    </div>
                                 </div>
                                 
                                 <!-- Password -->
@@ -158,9 +162,7 @@
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             const roleSelect = document.getElementById('role_select');
-            const identifierLabel = document.getElementById('identifier_label');
-            const identifierInput = document.getElementById('identifier_input');
-            const identifierHint = document.getElementById('identifier_hint');
+            const usernameHint = document.getElementById('username_hint');
             const facultyField = document.getElementById('faculty_field');
             const prodiField = document.getElementById('prodi_field');
 
@@ -168,36 +170,28 @@
                 const selectedRole = roleSelect.value;
                 
                 if (selectedRole === 'mahasiswa') {
-                    identifierLabel.innerHTML = 'NIM';
-                    identifierInput.placeholder = 'Masukkan NIM';
-                    identifierHint.innerHTML = 'Masukkan NIM (Nomor Induk Mahasiswa)';
+                    usernameHint.innerHTML = 'Masukkan NIM (Nomor Induk Mahasiswa) sebagai Username';
                     facultyField.style.display = 'block';
                     prodiField.style.display = 'block';
                     document.querySelector('input[name="fakultas"]').required = true;
                     document.querySelector('input[name="prodi"]').required = true;
                     
                 } else if (selectedRole === 'pegawai_asn') {
-                    identifierLabel.innerHTML = 'NIP';
-                    identifierInput.placeholder = 'Masukkan NIP';
-                    identifierHint.innerHTML = 'Masukkan NIP (Nomor Induk Pegawai ASN)';
+                    usernameHint.innerHTML = 'Masukkan NIP (Nomor Induk Pegawai ASN) sebagai Username';
                     facultyField.style.display = 'none';
                     prodiField.style.display = 'none';
                     document.querySelector('input[name="fakultas"]').required = false;
                     document.querySelector('input[name="prodi"]').required = false;
                     
                 } else if (selectedRole === 'pegawai_non_asn') {
-                    identifierLabel.innerHTML = 'NIK';
-                    identifierInput.placeholder = 'Masukkan NIK';
-                    identifierHint.innerHTML = 'Masukkan NIK (Nomor Induk Kependudukan)';
+                    usernameHint.innerHTML = 'Masukkan NIK (Nomor Induk Kependudukan) sebagai Username';
                     facultyField.style.display = 'none';
                     prodiField.style.display = 'none';
                     document.querySelector('input[name="fakultas"]').required = false;
                     document.querySelector('input[name="prodi"]').required = false;
                     
                 } else {
-                    identifierLabel.innerHTML = 'Username';
-                    identifierInput.placeholder = 'Masukkan Username';
-                    identifierHint.innerHTML = '';
+                    usernameHint.innerHTML = '';
                     facultyField.style.display = 'none';
                     prodiField.style.display = 'none';
                 }

@@ -23,9 +23,6 @@
                     <div class="d-flex flex-column">
                         <div class="d-flex align-items-center mb-2">
                             <h1 class="text-gray-900 fs-2 fw-bold me-1">{{ Auth::user()->name }}</h1>
-                            <a href="#">
-                                <i class="ki-outline ki-verify fs-1 text-primary"></i>
-                            </a>
                         </div>
                         <div class="d-flex flex-wrap fw-semibold fs-6 mb-4 pe-2">
                             <a href="#" class="d-flex align-items-center text-gray-400 text-hover-primary me-5 mb-2">
@@ -41,7 +38,7 @@
                     </div>
                     
                     <div class="d-flex my-4">
-                        <a href="#" class="btn btn-sm btn-primary me-3" data-bs-toggle="modal" data-bs-target="#kt_modal_edit_profile">
+                        <a href="{{ route('profile.edit') }}" class="btn btn-primary">
                             <i class="ki-outline ki-pencil fs-3"></i> Edit Profil
                         </a>
                     </div>
@@ -54,35 +51,18 @@
                         <div class="d-flex flex-wrap">
                             <div class="border border-gray-300 border-dashed rounded min-w-125px py-3 px-4 me-6 mb-3">
                                 <div class="d-flex align-items-center">
-                                    <i class="ki-outline ki-arrow-up fs-3 text-success me-2"></i>
-                                    <div class="fs-2 fw-bold" data-kt-countup="true" data-kt-countup-value="4500">0</div>
+                                    <i class="ki-outline ki-message-text-2 fs-3 text-primary me-2"></i>
+                                    <div class="fs-2 fw-bold text-primary">{{ $totalTickets ?? 0 }}</div>
                                 </div>
                                 <div class="fw-semibold fs-6 text-gray-400">Total Pengaduan</div>
                             </div>
                             <div class="border border-gray-300 border-dashed rounded min-w-125px py-3 px-4 me-6 mb-3">
                                 <div class="d-flex align-items-center">
-                                    <i class="ki-outline ki-arrow-up fs-3 text-success me-2"></i>
-                                    <div class="fs-2 fw-bold" data-kt-countup="true" data-kt-countup-value="80">0</div>
+                                    <i class="ki-outline ki-check-circle fs-3 text-success me-2"></i>
+                                    <div class="fs-2 fw-bold text-success">{{ $completedTickets ?? 0 }}</div>
                                 </div>
                                 <div class="fw-semibold fs-6 text-gray-400">Pengaduan Selesai</div>
                             </div>
-                            <div class="border border-gray-300 border-dashed rounded min-w-125px py-3 px-4 me-6 mb-3">
-                                <div class="d-flex align-items-center">
-                                    <i class="ki-outline ki-arrow-up fs-3 text-success me-2"></i>
-                                    <div class="fs-2 fw-bold" data-kt-countup="true" data-kt-countup-value="60">0</div>
-                                </div>
-                                <div class="fw-semibold fs-6 text-gray-400">Respons Rate</div>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="d-flex align-items-center w-200px w-sm-300px flex-column mt-3">
-                        <div class="d-flex justify-content-between w-100 mt-auto mb-2">
-                            <span class="fw-semibold fs-6 text-gray-400">Kelengkapan Profil</span>
-                            <span class="fw-bold fs-6" id="profile-completion">0%</span>
-                        </div>
-                        <div class="h-5px mx-3 w-100 bg-light mb-3">
-                            <div class="bg-success rounded h-5px" id="profile-progress-bar" role="progressbar" style="width: 0%;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
                         </div>
                     </div>
                 </div>
@@ -164,14 +144,14 @@
                 <div class="row mb-7">
                     <label class="col-lg-4 fw-semibold text-muted">Fakultas</label>
                     <div class="col-lg-8">
-                        <span class="fw-bold fs-6 text-gray-800">{{ Auth::user()->faculty ?? '-' }}</span>
+                        <span class="fw-bold fs-6 text-gray-800">{{ Auth::user()->fakultas ?? '-' }}</span>
                     </div>
                 </div>
                 
                 <div class="row mb-7">
                     <label class="col-lg-4 fw-semibold text-muted">Program Studi</label>
                     <div class="col-lg-8">
-                        <span class="fw-bold fs-6 text-gray-800">{{ Auth::user()->study_program ?? '-' }}</span>
+                        <span class="fw-bold fs-6 text-gray-800">{{ Auth::user()->prodi ?? '-' }}</span>
                     </div>
                 </div>
                 
@@ -260,30 +240,4 @@
     </div>
     <!--end::Tab Settings-->
 </div>
-
-<script>
-// Hitung persentase kelengkapan profil
-document.addEventListener('DOMContentLoaded', function() {
-    const user = @json(Auth::user());
-    let filledFields = 0;
-    let totalFields = 0;
-    
-    const fields = ['name', 'username', 'email', 'phone', 'faculty', 'address'];
-    const optionalFields = ['study_program', 'position'];
-    
-    fields.forEach(field => {
-        totalFields++;
-        if (user[field] && user[field] !== '') filledFields++;
-    });
-    
-    optionalFields.forEach(field => {
-        totalFields++;
-        if (user[field] && user[field] !== '') filledFields++;
-    });
-    
-    const percentage = Math.round((filledFields / totalFields) * 100);
-    document.getElementById('profile-completion').innerText = percentage + '%';
-    document.getElementById('profile-progress-bar').style.width = percentage + '%';
-});
-</script>
 @endsection

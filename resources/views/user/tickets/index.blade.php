@@ -33,21 +33,21 @@
                             </td>
                             <td>{{ $ticket->title }}</td>
                             <td>
-                        @php
-                            $statusColors = [
-                                'open' => 'primary',
-                                'in_progress' => 'warning',
-                                'resolved' => 'success',
-                                'closed' => 'secondary'
-                            ];
-                            $statusTexts = [
-                                'open' => 'Open',
-                                'in_progress' => 'In Progress',
-                                'resolved' => 'Resolved',
-                                'closed' => 'Closed'
-                            ];
-                        @endphp
-                        <span class="badge badge-{{ $statusColors[$ticket->status] }} fs-7 p-3">
+                            @php
+                                $statusColors = [
+                                    'open' => 'primary',
+                                    'in_progress' => 'warning',
+                                    'resolved' => 'success',
+                                    'closed' => 'secondary'
+                                ];
+                                $statusTexts = [
+                                    'open' => 'Open',
+                                    'in_progress' => 'In Progress',
+                                    'resolved' => 'Resolved',
+                                    'closed' => 'Closed'
+                                ];
+                            @endphp
+                        <span class="badge badge-{{ $statusColors[$ticket->status] }} px-3 py-2">
                             {{ $statusTexts[$ticket->status] }}
                         </span>
                             </td>

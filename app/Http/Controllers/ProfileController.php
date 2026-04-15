@@ -2,40 +2,49 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Ticket;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Hash;
 
 class ProfileController extends Controller
 {
     public function index()
     {
-        return view('user.profile.index');
+        $userId = Auth::id();
+        
+        $totalTickets = Ticket::where('user_id', $userId)->count();
+        $completedTickets = Ticket::where('user_id', $userId)
+                                 ->whereIn('status', ['resolved', 'closed'])
+                                 ->count();
+        
+        return view('user.profile.index', compact('totalTickets', 'completedTickets'));
     }
-    
+
+    // Tampilkan form edit profil
+    public function edit()
+    {
+        return view('user.profile.edit');
+    }
+
+    // Update profil
     public function update(Request $request)
     {
         $user = Auth::user();
         
         $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'required|email|unique:users,email,' . $user->id,
-            'phone' => 'nullable|string|max:15',
-            'address' => 'nullable|string',
-            'password' => 'nullable|min:6|confirmed',
+            'gender' => 'required|in:male,female',
+            'phone' => 'required|string|max:15',
+            'address' => 'required|string|max:255',
+            'birth_date' => 'nullable|date',
         ]);
-        
-        $user->name = $request->name;
-        $user->email = $request->email;
-        $user->phone = $request->phone;
-        $user->address = $request->address;
-        
-        if ($request->filled('password')) {
-            $user->password = Hash::make($request->password);
-        }
-        
-        $user->save();
-        
-        return redirect()->route('profile')->with('success', 'Profil berhasil diperbarui!');
+
+        $user->update([
+            'gender' => $request->gender,
+            'phone' => $request->phone,
+            'address' => $request->address,
+            'birth_date' => $request->birth_date,
+        ]);
+
+        return redirect()->route('dashboard')->with('success', 'Profil berhasil dilengkapi!');
     }
 }
