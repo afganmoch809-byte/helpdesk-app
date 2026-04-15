@@ -69,7 +69,7 @@
                                 </div>
                                 <div class="separator my-2"></div>
                                 <div class="menu-item px-5">
-                                    <a href="#" class="menu-link px-5">Profil Saya</a>
+                                    <a href="{{ route('profile') }}" class="menu-link px-5">Profil Saya</a>
                                 </div>
                                 <div class="menu-item px-5">
                                     <a class="menu-link px-5" href="#" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">Keluar</a>
@@ -104,11 +104,9 @@
                                     </a>
                                 </div>
                                 
-                                <!-- Semua Pengaduan -->
-<<<<<<< HEAD
-                                {{-- ================= ADMIN ================= --}}
+                                <!-- Semua Pengaduan - Conditional berdasarkan role -->
                                 @if(auth()->check() && auth()->user()->isAdmin())
-
+                                    <!-- Menu untuk ADMIN -->
                                     <div class="menu-item">
                                         <a class="menu-link" href="{{ route('admin.tickets.index') }}">
                                             <span class="menu-icon">
@@ -117,9 +115,8 @@
                                             <span class="menu-title">Semua Pengaduan</span>
                                         </a>
                                     </div>
-                                {{-- ================= USER ================= --}}
                                 @else
-
+                                    <!-- Menu untuk USER BIASA -->
                                     <div class="menu-item">
                                         <a class="menu-link" href="{{ route('tickets.index') }}">
                                             <span class="menu-icon">
@@ -129,18 +126,9 @@
                                         </a>
                                     </div>
                                 @endif
-=======
-                                <div class="menu-item">
-                                    <a class="menu-link" href="{{ route('tickets.index') }}">
-                                        <span class="menu-icon">
-                                            <i class="ki-outline ki-message-text-2 fs-2"></i>
-                                        </span>
-                                        <span class="menu-title">Semua Pengaduan</span>
-                                    </a>
-                                </div>
->>>>>>> 0427184526c5dd354cf4f90f4767968228efb2b1
                                 
-                                <!-- Buat Pengaduan -->
+                                <!-- Buat Pengaduan - Hanya untuk user biasa -->
+                                @if(auth()->check() && !auth()->user()->isAdmin())
                                 <div class="menu-item">
                                     <a class="menu-link" href="{{ route('tickets.create') }}">
                                         <span class="menu-icon">
@@ -149,6 +137,7 @@
                                         <span class="menu-title">Buat Pengaduan</span>
                                     </a>
                                 </div>
+                                @endif
                                 
                                 <!-- Separator -->
                                 <div class="separator my-4"></div>

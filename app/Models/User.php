@@ -16,17 +16,14 @@ class User extends Authenticatable
         'email',
         'password',
         'user_type',
-        'role',
-        'nim',
-        'nik',
-        'nip',
         'gender',
         'birth_date',
         'phone',
-        'faculty',
+        'fakultas',
         'address',
-        'study_program',
-        'position',
+        'prodi',
+        'jabatan',
+        'profile_completed',
     ];
 
     protected $hidden = [
@@ -34,36 +31,29 @@ class User extends Authenticatable
         'remember_token',
     ];
 
-<<<<<<< HEAD
-    protected function casts(): array
+    // Ganti email dengan username untuk login
+    public function username()
     {
-        return [
-            'email_verified_at' => 'datetime',
-            'password' => 'hashed',
-            'birth_date' => 'date',
-        ];
-    }
-
-    // Helper untuk menampilkan gender dalam bentuk teks
-    public function getGenderLabelAttribute()
-    {
-        return $this->gender == 'male' ? 'Laki-laki' : 'Perempuan';
-    }
-
-    // Untuk login menggunakan username (TANPA email)
-    public function findForPassport($username)
-    {
-        return $this->where('username', $username)->first();
+        return 'username';
     }
 
     public function isAdmin()
     {
-        return $this->email === 'admin@helpdesk.com';
+        return $this->user_type === 'admin';
     }
-=======
-    protected $casts = [
-        'email_verified_at' => 'datetime',
-        'birth_date' => 'date',
-    ];
->>>>>>> 0427184526c5dd354cf4f90f4767968228efb2b1
+
+    public function isMahasiswa()
+    {
+        return $this->user_type === 'mahasiswa';
+    }
+
+    public function isAsn()
+    {
+        return $this->user_type === 'pegawai_asn';
+    }
+
+    public function isNonAsn()
+    {
+        return $this->user_type === 'pegawai_non_asn';
+    }
 }

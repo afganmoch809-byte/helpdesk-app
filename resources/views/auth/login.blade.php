@@ -51,9 +51,8 @@
                                     <div class="text-gray-400 fw-semibold fs-6">Akses dashboard helpdesk Anda</div>
                                 </div>
                                 
-                                <!-- Username (NIM/NIK/NIP) -->
                                 <div class="fv-row mb-8">
-                                    <input type="text" placeholder="NIM / NIK / NIP" name="username" value="{{ old('username') }}" 
+                                    <input type="text" placeholder="Username" name="username" value="{{ old('username') }}" 
                                         class="form-control form-control-solid @error('username') is-invalid @enderror" required />
                                     @error('username')
                                         <div class="invalid-feedback">{{ $message }}</div>

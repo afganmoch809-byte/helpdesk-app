@@ -8,7 +8,7 @@
     <div class="col-md-3">
         <div class="card">
             <div class="card-body text-center">
-                <h1 class="text-primary fs-1 fw-bold">{{ $totalTickets ?? 0 }}</h1>
+                <h1 class="text-warning fs-1 fw-bold">{{ $totalTickets ?? 0 }}</h1>
                 <span class="text-gray-600">Total Tiket</span>
             </div>
         </div>
@@ -18,7 +18,7 @@
     <div class="col-md-3">
         <div class="card">
             <div class="card-body text-center">
-                <h1 class="text-warning fs-1 fw-bold">{{ $openTickets ?? 0 }}</h1>
+                <h1 class="text-primary fs-1 fw-bold">{{ $openTickets ?? 0 }}</h1>
                 <span class="text-gray-600">Open</span>
             </div>
         </div>
@@ -59,7 +59,6 @@
                         <th>Judul</th>
                         <th>Status</th>
                         <th>Tanggal</th>
-                        <th>Aksi</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -69,20 +68,24 @@
                         <td>{{ Str::limit($ticket->title, 50) }}</td>
                         <td>
                             @php
-                                $statusClass = [
-                                    'open' => 'warning',
-                                    'in_progress' => 'info',
-                                    'resolved' => 'success',
-                                ][$ticket->status] ?? 'secondary';
+                                $statusColors = [
+                                    'open' => 'primary',       
+                                    'in_progress' => 'warning', 
+                                    'resolved' => 'success',    
+                                    'closed' => 'secondary'     
+                                ];
+                                $statusTexts = [
+                                    'open' => 'Open',
+                                    'in_progress' => 'In Progress',
+                                    'resolved' => 'Resolved',
+                                    'closed' => 'Closed'
+                                ];
                             @endphp
-                            <span class="badge badge-light-{{ $statusClass }}">
-                                {{ ucfirst(str_replace('_', ' ', $ticket->status)) }}
+                            <span class="badge badge-{{ $statusColors[$ticket->status] }}">
+                                {{ $statusTexts[$ticket->status] }}
                             </span>
                         </td>
                         <td>{{ $ticket->created_at->format('d/m/Y') }}</td>
-                        <td>
-                            <a href="{{ route('tickets.show', $ticket) }}" class="btn btn-sm btn-primary">Detail</a>
-                        </td>
                     </tr>
                     @empty
                     <tr>

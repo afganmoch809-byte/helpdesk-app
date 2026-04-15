@@ -6,18 +6,19 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    public function up(): void
+    public function up()
     {
         Schema::table('users', function (Blueprint $table) {
-            
-            DB::statement("ALTER TABLE users MODIFY gender ENUM('male', 'female') NOT NULL");
+            if (!Schema::hasColumn('users', 'username')) {
+                $table->string('username')->unique()->after('id');
+            }
         });
     }
 
-    public function down(): void
+    public function down()
     {
         Schema::table('users', function (Blueprint $table) {
-            DB::statement("ALTER TABLE users MODIFY gender ENUM('L', 'P') NOT NULL");
+            $table->dropColumn('username');
         });
     }
 };

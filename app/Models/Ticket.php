@@ -2,39 +2,34 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use App\Models\User; // ✅ WAJIB
 
 class Ticket extends Model
 {
+    use HasFactory;
+
     protected $fillable = [
+        'ticket_number',
         'user_id',
-        'ticket_id',
-        'subject',
-        'message',
-        'priority',
-        'status',
+        'user_identifier',
+        'title',
+        'description',
         'attachment',
+        'status',
+        'resolved_at',
+        'assigned_to',
+        'assigned_at',
+        'last_replied_by',
     ];
 
-    protected static function boot()
-    {
-        parent::boot();
+    protected $casts = [
+        'resolved_at' => 'datetime',
+        'assigned_at' => 'datetime',
+    ];
 
-        static::creating(function ($ticket) {
-            $ticket->ticket_id = 'TCK-' . date('Ymd') . '-' . rand(1000,9999);
-        });
-    }
-
-    // Relasi ke user
     public function user()
     {
         return $this->belongsTo(User::class);
-    }
-
-    // Relasi ke reply
-    public function replies()
-    {
-        return $this->hasMany(TicketReply::class);
     }
 }

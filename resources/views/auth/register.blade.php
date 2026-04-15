@@ -18,16 +18,13 @@
 <body id="kt_body" class="app-blank">
     <div class="d-flex flex-column flex-root" id="kt_app_root">
         <div class="d-flex flex-column flex-center flex-column-fluid">
-            <!-- Form Register di Tengah -->
             <div class="d-flex flex-column flex-center w-100 p-10">
                 <div class="d-flex justify-content-between flex-column-fluid flex-column w-100 mw-450px">
                     
-                    <!-- Form -->
                     <div class="py-20">
                         <form class="form w-100" method="POST" action="{{ route('register') }}">
                             @csrf
                             
-                            <!-- Tampilkan semua error validasi -->
                             @if ($errors->any())
                                 <div class="alert alert-danger mb-5">
                                     <ul class="mb-0">
@@ -38,29 +35,41 @@
                                 </div>
                             @endif
                             
+                            @if (session('success'))
+                                <div class="alert alert-success mb-5">
+                                    {{ session('success') }}
+                                </div>
+                            @endif
+                            
                             <div class="card-body">
                                 <div class="text-center mb-10">
                                     <h1 class="text-dark mb-3 fs-3x">Daftar</h1>
                                     <div class="text-gray-400 fw-semibold fs-6">Buat akun helpdesk Anda</div>
                                 </div>
                                 
-                                <!-- Pilih Role (DROPDOWN) -->
+                                <!-- Pilih Role -->
                                 <div class="fv-row mb-8">
                                     <label class="required fw-semibold fs-6 mb-2">Pendaftaran Sebagai</label>
-                                    <select name="role" id="role_select" class="form-control form-control-solid @error('role') is-invalid @enderror" required>
-                                        <option value="" disabled {{ old('role') ? '' : 'selected' }}>-- Pilih Role --</option>
-                                        <option value="mahasiswa" {{ old('role') == 'mahasiswa' ? 'selected' : '' }}>Mahasiswa</option>
-                                        <option value="pegawai" {{ old('role') == 'pegawai' ? 'selected' : '' }}>Pegawai (Non ASN)</option>
-                                        <option value="asn" {{ old('role') == 'asn' ? 'selected' : '' }}>ASN (PNS/Dosen)</option>
+                                    <select name="user_type" id="role_select" class="form-control form-control-solid @error('user_type') is-invalid @enderror" required>
+                                        <option value="" disabled selected>-- Pilih Role --</option>
+                                        <option value="mahasiswa">Mahasiswa</option>
+                                        <option value="pegawai_asn">Pegawai ASN</option>
+                                        <option value="pegawai_non_asn">Pegawai Non ASN</option>
                                     </select>
-                                    @error('role')
+                                    @error('user_type')
                                         <div class="invalid-feedback d-block">{{ $message }}</div>
                                     @enderror
                                 </div>
                                 
-                                <!-- Dynamic Fields (NIM/NIK/NIP) -->
-                                <div id="dynamic_fields">
-                                    {{-- Akan diisi JavaScript --}}
+                                <!-- Field Identifier (NIM/NIP/NIK) -->
+                                <div class="fv-row mb-8">
+                                    <label class="required fw-semibold fs-6 mb-2" id="identifier_label">NIM</label>
+                                    <input type="text" name="username" id="identifier_input" value="{{ old('username') }}" 
+                                        class="form-control form-control-solid @error('username') is-invalid @enderror" required />
+                                    <div class="form-text" id="identifier_hint"></div>
+                                    @error('username')
+                                        <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
                                 </div>
                                 
                                 <!-- Nama Lengkap -->
@@ -81,9 +90,27 @@
                                     @enderror
                                 </div>
                                 
+                                <!-- Fakultas -->
+                                <div class="fv-row mb-8" id="faculty_field">
+                                    <input type="text" placeholder="Fakultas" name="fakultas" value="{{ old('fakultas') }}" 
+                                        class="form-control form-control-solid @error('fakultas') is-invalid @enderror" />
+                                    @error('fakultas')
+                                        <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
+                                </div>
+                                
+                                <!-- Program Studi -->
+                                <div class="fv-row mb-8" id="prodi_field">
+                                    <input type="text" placeholder="Program Studi" name="prodi" value="{{ old('prodi') }}" 
+                                        class="form-control form-control-solid @error('prodi') is-invalid @enderror" />
+                                    @error('prodi')
+                                        <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
+                                </div>
+                                
                                 <!-- Password -->
                                 <div class="fv-row mb-8">
-                                    <input type="password" placeholder="Password (minimal 8 karakter)" name="password" 
+                                    <input type="password" placeholder="Password (minimal 6 karakter)" name="password" 
                                         class="form-control form-control-solid @error('password') is-invalid @enderror" required />
                                     @error('password')
                                         <div class="invalid-feedback">{{ $message }}</div>
@@ -96,7 +123,6 @@
                                         class="form-control form-control-solid" required />
                                 </div>
                                 
-                                <!-- Tombol Daftar (FULL WIDTH) -->
                                 <div class="d-grid mb-5">
                                     <button type="submit" class="btn btn-primary btn-lg">
                                         <span class="indicator-label">Daftar</span>
@@ -107,7 +133,6 @@
                                     </button>
                                 </div>
                                 
-                                <!-- Link ke Login (DI BAWAH TOMBOL) -->
                                 <div class="text-center">
                                     <span class="text-gray-400 fw-semibold fs-6">Sudah punya akun?</span>
                                     <a href="{{ route('login') }}" class="link-primary fw-semibold fs-6 ms-1">Masuk</a>
@@ -116,7 +141,6 @@
                         </form>
                     </div>
                     
-                    <!-- Footer -->
                     <div class="m-0">
                         <div class="text-center text-gray-500 fs-7">
                             &copy; {{ date('Y') }} Helpdesk App. All rights reserved.
@@ -127,66 +151,60 @@
         </div>
     </div>
 
-    <!-- Javascript -->
     <script>var hostUrl = "{{ asset('assets') }}/";</script>
     <script src="{{ asset('assets/plugins/global/plugins.bundle.js') }}"></script>
     <script src="{{ asset('assets/js/scripts.bundle.js') }}"></script>
     
     <script>
-        // Script untuk mengganti field identifier berdasarkan role yang dipilih
         document.addEventListener('DOMContentLoaded', function() {
             const roleSelect = document.getElementById('role_select');
-            const dynamicFields = document.getElementById('dynamic_fields');
+            const identifierLabel = document.getElementById('identifier_label');
+            const identifierInput = document.getElementById('identifier_input');
+            const identifierHint = document.getElementById('identifier_hint');
+            const facultyField = document.getElementById('faculty_field');
+            const prodiField = document.getElementById('prodi_field');
 
-            function updateIdentifierField() {
+            function updateFields() {
                 const selectedRole = roleSelect.value;
-
-                let html = '';
+                
                 if (selectedRole === 'mahasiswa') {
-                    html = `
-                        <div class="fv-row mb-8">
-                            <label class="fw-semibold fs-6 mb-2">NIM</label>
-                            <input type="text" placeholder="Masukkan NIM (Nomor Induk Mahasiswa)" name="nim" value="{{ old('nim') }}"
-                                class="form-control form-control-solid @error('nim') is-invalid @enderror" required />
-                            @error('nim')
-                                <div class="invalid-feedback d-block">{{ $message }}</div>
-                            @enderror
-                        </div>
-                    `;
-                } else if (selectedRole === 'pegawai') {
-                    html = `
-                        <div class="fv-row mb-8">
-                            <label class="fw-semibold fs-6 mb-2">NIK</label>
-                            <input type="text" placeholder="Masukkan NIK (Nomor Induk Kependudukan)" name="nik" value="{{ old('nik') }}"
-                                class="form-control form-control-solid @error('nik') is-invalid @enderror" required />
-                            @error('nik')
-                                <div class="invalid-feedback d-block">{{ $message }}</div>
-                            @enderror
-                        </div>
-                    `;
-                } else if (selectedRole === 'asn') {
-                    html = `
-                        <div class="fv-row mb-8">
-                            <label class="fw-semibold fs-6 mb-2">NIP</label>
-                            <input type="text" placeholder="Masukkan NIP (Nomor Induk Pegawai)" name="nip" value="{{ old('nip') }}"
-                                class="form-control form-control-solid @error('nip') is-invalid @enderror" required />
-                            @error('nip')
-                                <div class="invalid-feedback d-block">{{ $message }}</div>
-                            @enderror
-                        </div>
-                    `;
+                    identifierLabel.innerHTML = 'NIM';
+                    identifierInput.placeholder = 'Masukkan NIM';
+                    identifierHint.innerHTML = 'Masukkan NIM (Nomor Induk Mahasiswa)';
+                    facultyField.style.display = 'block';
+                    prodiField.style.display = 'block';
+                    document.querySelector('input[name="fakultas"]').required = true;
+                    document.querySelector('input[name="prodi"]').required = true;
+                    
+                } else if (selectedRole === 'pegawai_asn') {
+                    identifierLabel.innerHTML = 'NIP';
+                    identifierInput.placeholder = 'Masukkan NIP';
+                    identifierHint.innerHTML = 'Masukkan NIP (Nomor Induk Pegawai ASN)';
+                    facultyField.style.display = 'none';
+                    prodiField.style.display = 'none';
+                    document.querySelector('input[name="fakultas"]').required = false;
+                    document.querySelector('input[name="prodi"]').required = false;
+                    
+                } else if (selectedRole === 'pegawai_non_asn') {
+                    identifierLabel.innerHTML = 'NIK';
+                    identifierInput.placeholder = 'Masukkan NIK';
+                    identifierHint.innerHTML = 'Masukkan NIK (Nomor Induk Kependudukan)';
+                    facultyField.style.display = 'none';
+                    prodiField.style.display = 'none';
+                    document.querySelector('input[name="fakultas"]').required = false;
+                    document.querySelector('input[name="prodi"]').required = false;
+                    
                 } else {
-                    html = `<div class="alert alert-warning mb-8">Silakan pilih role terlebih dahulu.</div>`;
+                    identifierLabel.innerHTML = 'Username';
+                    identifierInput.placeholder = 'Masukkan Username';
+                    identifierHint.innerHTML = '';
+                    facultyField.style.display = 'none';
+                    prodiField.style.display = 'none';
                 }
-
-                dynamicFields.innerHTML = html;
             }
 
-            // Event listener untuk perubahan dropdown
-            roleSelect.addEventListener('change', updateIdentifierField);
-
-            // Panggil pertama kali jika sudah ada old value
-            updateIdentifierField();
+            roleSelect.addEventListener('change', updateFields);
+            updateFields();
         });
     </script>
 </body>
