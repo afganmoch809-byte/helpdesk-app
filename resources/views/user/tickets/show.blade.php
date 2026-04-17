@@ -1,4 +1,4 @@
-@extends('layouts.metronic')
+@extends('layouts.user')
 
 @section('title', 'Detail Pengaduan - ' . $ticket->ticket_number)
 

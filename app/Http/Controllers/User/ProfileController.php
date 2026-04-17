@@ -1,7 +1,8 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\User;  // ← ubah namespace
 
+use App\Http\Controllers\Controller;
 use App\Models\Ticket;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -20,13 +21,11 @@ class ProfileController extends Controller
         return view('user.profile.index', compact('totalTickets', 'completedTickets'));
     }
 
-    // Tampilkan form edit profil
     public function edit()
     {
         return view('user.profile.edit');
     }
 
-    // Update profil
     public function update(Request $request)
     {
         $user = Auth::user();

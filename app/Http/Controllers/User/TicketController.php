@@ -4,16 +4,16 @@ namespace App\Http\Controllers\User;
 
 use App\Http\Controllers\Controller;
 use App\Models\Ticket;
-use App\Models\TicketReply;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 
 class TicketController extends Controller
 {
     public function index()
     {
         $tickets = Ticket::where('user_id', Auth::id())
-                        ->latest()
+                        ->orderBy('created_at', 'desc')
                         ->paginate(10);
         
         return view('user.tickets.index', compact('tickets'));
@@ -39,13 +39,12 @@ class TicketController extends Controller
             $attachmentPath = $request->file('attachment')->store('tickets', 'public');
         }
 
-        // Generate ticket number
-        $ticketNumber = 'TCK-' . date('Ymd') . '-' . strtoupper(uniqid());
+        $ticketNumber = 'TCK-' . date('Ymd') . '-' . strtoupper(substr(uniqid(), -6));
 
         $ticket = Ticket::create([
             'ticket_number' => $ticketNumber,
-            'user_id' => Auth::id(),
-            'user_identifier' => $user->username, // NIM/NIP/NIK dari username
+            'user_id' => $user->id,
+            'user_identifier' => $user->username,
             'title' => $request->title,
             'description' => $request->description,
             'attachment' => $attachmentPath,
@@ -53,7 +52,7 @@ class TicketController extends Controller
         ]);
 
         return redirect()->route('tickets.show', $ticket)
-                        ->with('success', 'Pengaduan berhasil dikirim! Nomor tiket: ' . $ticketNumber);
+                        ->with('success', 'Pengaduan berhasil dikirim!');
     }
 
     public function show(Ticket $ticket)
@@ -63,44 +62,6 @@ class TicketController extends Controller
         }
         
         return view('user.tickets.show', compact('ticket'));
-    }
-
-    public function edit(Ticket $ticket)
-    {
-        if ($ticket->user_id !== Auth::id()) {
-            abort(403);
-        }
-        
-        return view('user.tickets.edit', compact('ticket'));
-    }
-
-    public function update(Request $request, Ticket $ticket)
-    {
-        if ($ticket->user_id !== Auth::id()) {
-            abort(403);
-        }
-        
-        $request->validate([
-            'title' => 'required|string|max:255',
-            'description' => 'required|string',
-        ]);
-
-        $ticket->update($request->only(['title', 'description']));
-
-        return redirect()->route('tickets.show', $ticket)
-                        ->with('success', 'Pengaduan berhasil diupdate!');
-    }
-
-    public function destroy(Ticket $ticket)
-    {
-        if ($ticket->user_id !== Auth::id()) {
-            abort(403);
-        }
-        
-        $ticket->delete();
-        
-        return redirect()->route('tickets.index')
-                        ->with('success', 'Pengaduan berhasil dihapus!');
     }
 
     public function close($id)

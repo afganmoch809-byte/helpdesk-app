@@ -1,10 +1,12 @@
 <?php
 
-use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
 use App\Http\Controllers\Admin\TicketController as AdminTicketController;
+use App\Http\Controllers\Admin\ProfileController as AdminProfileController;
+use App\Http\Controllers\User\DashboardController as UserDashboardController;
+use App\Http\Controllers\User\TicketController as UserTicketController;
+use App\Http\Controllers\User\ProfileController as UserProfileController;
 use App\Http\Controllers\AuthController;
-use App\Http\Controllers\ProfileController;
-use App\Http\Controllers\User\TicketController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -27,26 +29,23 @@ Route::middleware('guest')->group(function () {
 });
 
 // ========== PROFILE ROUTES (tanpa middleware profile.complete) ==========
-// DITEMBAHKAN INI
 Route::middleware(['auth'])->group(function () {
-    Route::get('/profile/edit', [ProfileController::class, 'edit'])->name('profile.edit');
-    Route::put('/profile/update', [ProfileController::class, 'update'])->name('profile.update');
+    // Profile User
+    Route::get('/profile', [UserProfileController::class, 'index'])->name('profile');
+    Route::get('/profile/edit', [UserProfileController::class, 'edit'])->name('profile.edit');
+    Route::put('/profile/update', [UserProfileController::class, 'update'])->name('profile.update');
 });
 
-// ========== USER ROUTES (auth user biasa + profile lengkap) ==========
-// UBAH middleware dari 'auth' menjadi ['auth', 'profile.complete']
+// ========== USER ROUTES (auth + profile lengkap) ==========
 Route::middleware(['auth', 'profile.complete'])->group(function () {
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
     
-    // Dashboard
-    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
-
-    // Profile User Biasa (index saja)
-    Route::get('/profile', [ProfileController::class, 'index'])->name('profile');
-
-    // Tickets User Biasa
-    Route::resource('tickets', TicketController::class);
-    Route::post('tickets/{id}/close', [TicketController::class, 'close'])->name('tickets.close');
+    // Dashboard User
+    Route::get('/dashboard', [UserDashboardController::class, 'index'])->name('dashboard');
+    
+    // Tickets User
+    Route::resource('tickets', UserTicketController::class);
+    Route::post('tickets/{id}/close', [UserTicketController::class, 'close'])->name('tickets.close');
 });
 
 // ========== ADMIN ROUTES ==========
@@ -54,8 +53,15 @@ Route::middleware(['auth', 'admin'])
     ->prefix('admin')
     ->name('admin.')
     ->group(function () {
-        Route::get('/dashboard', [DashboardController::class, 'adminIndex'])->name('dashboard');
+        // Dashboard Admin
+        Route::get('/dashboard', [AdminDashboardController::class, 'index'])->name('dashboard');
+        
+        // Tickets Admin
         Route::resource('tickets', AdminTicketController::class);
-        Route::get('/profile', [ProfileController::class, 'index'])->name('profile');
-        Route::put('/profile', [ProfileController::class, 'update'])->name('profile.update');
+        Route::put('tickets/{ticket}/status', [AdminTicketController::class, 'updateStatus'])->name('tickets.updateStatus');
+        
+        // Profile Admin
+        Route::get('/profile', [AdminProfileController::class, 'index'])->name('profile');
+        Route::get('/profile/edit', [AdminProfileController::class, 'edit'])->name('profile.edit');
+        Route::put('/profile/update', [AdminProfileController::class, 'update'])->name('profile.update');
     });

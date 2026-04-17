@@ -1,35 +1,38 @@
 <?php
 
-namespace App\Http\Controllers\Admin;  // <-- Namespace yang benar
+namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Ticket;
-use App\Models\TicketReply;
 use Illuminate\Http\Request;
 
 class TicketController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $tickets = Ticket::latest()->paginate(10);
+        // Query dasar untuk mengambil semua tiket
+        $query = Ticket::with('user')->orderBy('created_at', 'desc');
+        
+        // Filter berdasarkan status jika ada
+        if ($request->has('status') && $request->status != 'all') {
+            $status = $request->status;
+            
+            // Validasi status yang diizinkan
+            if (in_array($status, ['open', 'in_progress', 'resolved', 'closed'])) {
+                $query->where('status', $status);
+            }
+        }
+        
+        // Ambil data dengan pagination (10 data per halaman)
+        $tickets = $query->paginate(10);
+        
+        // Kirim ke view admin.tickets.index
         return view('admin.tickets.index', compact('tickets'));
     }
-
-    public function show(Ticket $ticket)
+    
+    public function show($id)
     {
+        $ticket = Ticket::with(['user', 'responses.user'])->findOrFail($id);
         return view('admin.tickets.show', compact('ticket'));
     }
-
-    public function update(Request $request, Ticket $ticket)
-    {
-        $request->validate([
-            'status' => 'required|in:pending,in_progress,closed,completed',
-        ]);
-
-        $ticket->update(['status' => $request->status]);
-
-        return redirect()->route('admin.tickets.show', $ticket)
-                        ->with('success', 'Status tiket berhasil diupdate!');
-    }
-
 }

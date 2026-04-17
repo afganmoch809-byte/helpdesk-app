@@ -1,95 +1,141 @@
-@extends('layouts.metronic')
+@extends('layouts.admin')
+
+@section('title', 'Dashboard Admin')
 
 @section('content')
-<div class="container">
-    <div class="row g-5 mb-5">
-        <div class="col-md-3">
-            <div class="card bg-primary text-white">
-                <div class="card-body">
-                    <h5>Total Tickets</h5>
-                    <h2>{{ $stats['total'] }}</h2>
+<!-- Stats Cards -->
+<div class="row g-5 g-xl-8 mb-8">
+    <!-- Total Tiket -->
+    <div class="col-md-3">
+        <div class="card card-flush shadow-sm">
+            <div class="card-body d-flex align-items-center py-6">
+                <div class="symbol symbol-50px me-4">
+                    <div class="symbol-label bg-light-warning">
+                        <i class="fas fa-ticket-alt fs-2x text-warning"></i>
+                    </div>
                 </div>
-            </div>
-        </div>
-        <div class="col-md-3">
-            <div class="card bg-warning text-white">
-                <div class="card-body">
-                    <h5>Open</h5>
-                    <h2>{{ $stats['open'] }}</h2>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-3">
-            <div class="card bg-info text-white">
-                <div class="card-body">
-                    <h5>In Progress</h5>
-                    <h2>{{ $stats['in_progress'] }}</h2>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-3">
-            <div class="card bg-secondary text-white">
-                <div class="card-body">
-                    <h5>Closed</h5>
-                    <h2>{{ $stats['closed'] }}</h2>
+                <div>
+                    <span class="text-gray-600 fw-semibold fs-7">Total Tiket</span>
+                    <h2 class="text-warning fs-1 fw-bold mb-0">{{ $totalTickets ?? 0 }}</h2>
                 </div>
             </div>
         </div>
     </div>
-
-    <div class="card">
-        <div class="card-header">
-            <h3 class="card-title">All Tickets</h3>
-            <div class="card-toolbar">
-                <form method="GET" class="d-flex gap-3">
-                    <select name="status" class="form-select w-150px">
-                        <option value="">All Status</option>
-                        <option value="open" {{ request('status') == 'open' ? 'selected' : '' }}>Open</option>
-                        <option value="in_progress" {{ request('status') == 'in_progress' ? 'selected' : '' }}>In Progress</option>
-                        <option value="closed" {{ request('status') == 'closed' ? 'selected' : '' }}>Closed</option>
-                    </select>
-                    <select name="priority" class="form-select w-150px">
-                        <option value="">All Priority</option>
-                        <option value="low" {{ request('priority') == 'low' ? 'selected' : '' }}>Low</option>
-                        <option value="medium" {{ request('priority') == 'medium' ? 'selected' : '' }}>Medium</option>
-                        <option value="high" {{ request('priority') == 'high' ? 'selected' : '' }}>High</option>
-                    </select>
-                    <button type="submit" class="btn btn-primary">Filter</button>
-                </form>
+    
+    <!-- Open -->
+    <div class="col-md-3">
+        <div class="card card-flush shadow-sm">
+            <div class="card-body d-flex align-items-center py-6">
+                <div class="symbol symbol-50px me-4">
+                    <div class="symbol-label bg-light-primary">
+                        <i class="fas fa-envelope-open-text fs-2x text-primary"></i>
+                    </div>
+                </div>
+                <div>
+                    <span class="text-gray-600 fw-semibold fs-7">Open</span>
+                    <h2 class="text-primary fs-1 fw-bold mb-0">{{ $openTickets ?? 0 }}</h2>
+                </div>
             </div>
         </div>
-        <div class="card-body">
-            <div class="table-responsive">
-                <table class="table table-row-dashed">
-                    <thead>
-                        <tr>
-                            <th>ID</th>
-                            <th>User</th>
-                            <th>Subject</th>
-                            <th>Priority</th>
-                            <th>Status</th>
-                            <th>Created</th>
-                            <th>Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach($tickets as $ticket)
-                        <tr>
-                            <td>{{ $ticket->ticket_id }}</td>
-                            <td>{{ $ticket->user->name }}</td>
-                            <td>{{ $ticket->subject }}</td>
-                            <td>{!! $ticket->priority_badge !!}</td>
-                            <td>{!! $ticket->status_badge !!}</td>
-                            <td>{{ $ticket->created_at->format('d M Y') }}</td>
-                            <td>
-                                <a href="{{ route('admin.tickets.show', $ticket->id) }}" class="btn btn-sm btn-light">View</a>
-                            </td>
-                        </tr>
-                        @endforeach
-                    </tbody>
-                </table>
+    </div>
+    
+    <!-- In Progress -->
+    <div class="col-md-3">
+        <div class="card card-flush shadow-sm">
+            <div class="card-body d-flex align-items-center py-6">
+                <div class="symbol symbol-50px me-4">
+                    <div class="symbol-label bg-light-info">
+                        <i class="fas fa-clock fs-2x text-info"></i>
+                    </div>
+                </div>
+                <div>
+                    <span class="text-gray-600 fw-semibold fs-7">In Progress</span>
+                    <h2 class="text-info fs-1 fw-bold mb-0">{{ $inProgressTickets ?? 0 }}</h2>
+                </div>
             </div>
-            {{ $tickets->links() }}
+        </div>
+    </div>
+    
+    <!-- Resolved -->
+    <div class="col-md-3">
+        <div class="card card-flush shadow-sm">
+            <div class="card-body d-flex align-items-center py-6">
+                <div class="symbol symbol-50px me-4">
+                    <div class="symbol-label bg-light-success">
+                        <i class="fas fa-check-circle fs-2x text-success"></i>
+                    </div>
+                </div>
+                <div>
+                    <span class="text-gray-600 fw-semibold fs-7">Resolved</span>
+                    <h2 class="text-success fs-1 fw-bold mb-0">{{ $resolvedTickets ?? 0 }}</h2>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Tiket Terbaru -->
+<div class="card card-flush shadow-sm">
+    <div class="card-header py-5">
+        <h3 class="card-title fw-bold">
+            <i class="fas fa-list me-2 text-primary"></i>
+            Tiket Terbaru
+        </h3>
+        <a href="{{ route('admin.tickets.index') }}" class="btn btn-primary">
+            Lihat Semua
+            <i class="fas fa-arrow-right ms-1"></i>
+        </a>
+    </div>
+    <div class="card-body pt-0">
+        <div class="table-responsive">
+            <table class="table align-middle gs-0 gy-4">
+                <thead>
+                    <tr class="fw-bold text-gray-500 border-bottom fs-7">
+                        <th>No. Tiket</th>
+                        <th>User</th>
+                        <th>Judul</th>
+                        <th>Status</th>
+                        <th>Tanggal</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @forelse($recentTickets as $ticket)
+                    <tr>
+                        <td>
+                            <span class="fw-bold">{{ $ticket->ticket_number }}</span>
+                        </td>
+                        <td>{{ $ticket->user->name ?? '-' }}</td>
+                        <td>{{ $ticket->title }}</td>
+                        <td>
+                            @php
+                                $statusColors = [
+                                    'open' => 'primary',
+                                    'in_progress' => 'warning',
+                                    'resolved' => 'success',
+                                    'closed' => 'secondary'
+                                ];
+                                $statusTexts = [
+                                    'open' => 'Open',
+                                    'in_progress' => 'In Progress',
+                                    'resolved' => 'Resolved',
+                                    'closed' => 'Closed'
+                                ];
+                            @endphp
+                            <span class="badge badge-{{ $statusColors[$ticket->status] }} px-3 py-2">
+                                {{ $statusTexts[$ticket->status] }}
+                            </span>
+                        </td>
+                        <td>{{ $ticket->created_at->format('d/m/Y') }}</td>
+                    </tr>
+                    @empty
+                    <tr>
+                        <td colspan="5" class="text-center py-5">
+                            Belum ada tiket
+                        </td>
+                    </tr>
+                    @endforelse
+                </tbody>
+            </table>
         </div>
     </div>
 </div>

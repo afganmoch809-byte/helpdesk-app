@@ -1,4 +1,4 @@
-@extends('layouts.metronic')
+@extends('layouts.user')
 
 @section('title', 'Dashboard')
 
@@ -123,7 +123,7 @@
                                 {{ $statusTexts[$ticket->status] }}
                             </span>
                         </td>
-                        <td>{{ $ticket->created_at->format('d/m/Y') }}</td>
+                        <td>{{ $ticket->created_at->format('d/m/a') }}</td>
                     </tr>
                     @empty
                     <tr>
